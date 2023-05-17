@@ -63,8 +63,7 @@ const inputClosePin = document.querySelector('.form__input--pin');
 
 // Application logic starts here ///////////////////////////////////////////////////////////////
 displayMovements(account1.movements);
-
-
+createUsernames(accounts);
 
 
 // Functions ///////////////////////////////////////////////////////////////////////////
@@ -93,7 +92,16 @@ function displayMovements(movements){
   
 }
 
-createUsernames(accounts);
+calcAndDisplayMovements(account1.movements);
+
+// Loop through account's movement array and add all total deposit & withdraw to get the balance.
+function calcAndDisplayMovements(movements){
+  const balance = movements.reduce(function(acc, cur){
+    return acc + cur;
+  }, 0);
+
+  return `${balance} USD`;
+}
 
 // Create a username property and use the initials of their first, middle and last name as
 // their username.

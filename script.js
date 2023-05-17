@@ -61,6 +61,62 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+// Application logic starts here ///////////////////////////////////////////////////////////////
+displayMovements(account1.movements);
+
+
+
+
+// Functions ///////////////////////////////////////////////////////////////////////////
+
+// - Loop through each of the account's movements property and display them in the application.
+function displayMovements(movements){
+
+  // - Clear out the default html.
+  containerMovements.innerHTML = '';
+
+  // 1. Loop through the movements array
+  movements.forEach(function(mov, i){
+    // 2. In each iteration, we want to render them onto the "movements" element.
+    const type = mov > 0 ? 'deposit' : 'withdrawal';
+
+    const html = `
+      <div class="movements__row">
+        <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
+        <div class="movements__date">3 days ago</div>
+        <div class="movements__value">${mov}</div>
+      </div>
+    `;
+    
+    containerMovements.insertAdjacentHTML('afterbegin', html);
+
+  });
+  
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES

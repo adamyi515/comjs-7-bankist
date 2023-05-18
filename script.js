@@ -64,6 +64,8 @@ const inputClosePin = document.querySelector('.form__input--pin');
 // Application logic starts here ///////////////////////////////////////////////////////////////
 displayMovements(account1.movements);
 createUsernames(accounts);
+calcAndDisplayMovements(account1.movements);
+calcAndDisplaySummary(account1.movements);
 
 
 // Functions ///////////////////////////////////////////////////////////////////////////
@@ -92,15 +94,13 @@ function displayMovements(movements){
   
 }
 
-calcAndDisplayMovements(account1.movements);
-
 // Loop through account's movement array and add all total deposit & withdraw to get the balance.
 function calcAndDisplayMovements(movements){
   const balance = movements.reduce(function(acc, cur){
     return acc + cur;
   }, 0);
 
-  return `${balance} USD`;
+  labelBalance.textContent = `${balance} USD`;
 }
 
 // Create a username property and use the initials of their first, middle and last name as
@@ -114,7 +114,34 @@ function createUsernames(accts){
 }
 
 
+// Calculate the total income, expenses (withdrawal) and the interests earned based on income.
+function calcAndDisplaySummary(movements){
+  const currentInterest = 1.2;
+  // const totalIncome = movements.filter(function(move){
+  //   if(move > 0) return move;
+  // })
+  // .reduce(function(acc, cur){
+  //   return acc + cur;
+  // }, 0);
+  const totalIncome = movements
+    .filter((move) => move > 0)
+    .reduce((acc, cur) => acc + cur, 0);
 
+  const totalWithdrawal = Math.abs(movements
+    .filter((move) => move < 0)
+    .reduce((acc, cur) => acc + cur, 0));
+
+  // Interest is based on the total income in account. Default interest is 1.1 percent.
+  const interestEarned = movements
+    .filter((move) => move > 0)
+    .map((move) => (move * currentInterest) / 100)
+    .reduce((acc, cur) => acc + cur, 0);
+
+  labelSumIn.textContent = `$${totalIncome}`;
+  labelSumOut.textContent = `$${totalWithdrawal}`;
+  labelSumInterest.textContent = `$${interestEarned}`;
+
+}
 
 
 

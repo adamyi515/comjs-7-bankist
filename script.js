@@ -61,11 +61,53 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
+
 // Application logic starts here ///////////////////////////////////////////////////////////////
-displayMovements(account1.movements);
+// Initialize at the beginning of the applicaiton.
 createUsernames(accounts);
-calcAndDisplayMovements(account1.movements);
-calcAndDisplaySummary(account1.movements);
+let currentAcct;
+
+
+// Login event handler
+btnLogin.addEventListener('click', function(ev){
+  ev.preventDefault();
+
+  // Capture the userinput
+  const username = inputLoginUsername.value;
+  const pin = parseInt(inputLoginPin.value);
+
+  // Remove values and focus from input fields.
+  inputLoginUsername.value = '';
+  inputLoginPin.value = '';
+  inputLoginPin.blur();
+
+  // Find the account. 
+  currentAcct = accounts.find(function(acct){
+    if(acct.username === username) return acct;
+  });
+
+  // If Account NOT FOUND then exit out current process.
+  if(!currentAcct) return;
+
+  if(currentAcct.pin === pin){
+    // 1. Show the application (set the opacity)
+    containerApp.style.opacity = 100;
+    labelWelcome.textContent = `Welcome back ${currentAcct.owner.split(' ')[0]}`
+
+    // 2. Display movements
+    displayMovements(currentAcct.movements);
+
+    // 3. Display balance
+    calcAndDisplayBalance(currentAcct.movements);
+
+    // 4. Display Summary
+    calcAndDisplaySummary(currentAcct);
+  }
+});
+
+
+
+
 
 
 // Functions ///////////////////////////////////////////////////////////////////////////
@@ -95,7 +137,7 @@ function displayMovements(movements){
 }
 
 // Loop through account's movement array and add all total deposit & withdraw to get the balance.
-function calcAndDisplayMovements(movements){
+function calcAndDisplayBalance(movements){
   const balance = movements.reduce(function(acc, cur){
     return acc + cur;
   }, 0);
@@ -115,24 +157,20 @@ function createUsernames(accts){
 
 
 // Calculate the total income, expenses (withdrawal) and the interests earned based on income.
-function calcAndDisplaySummary(movements){
-  const currentInterest = 1.2;
-  // const totalIncome = movements.filter(function(move){
-  //   if(move > 0) return move;
-  // })
-  // .reduce(function(acc, cur){
-  //   return acc + cur;
-  // }, 0);
-  const totalIncome = movements
+function calcAndDisplaySummary(acct){
+  const currentInterest = acct.interestRate;
+
+  const totalIncome = acct.movements
     .filter((move) => move > 0)
     .reduce((acc, cur) => acc + cur, 0);
 
-  const totalWithdrawal = Math.abs(movements
+  const totalWithdrawal = Math.abs(acct.movements
     .filter((move) => move < 0)
     .reduce((acc, cur) => acc + cur, 0));
 
-  // Interest is based on the total income in account. Default interest is 1.1 percent.
-  const interestEarned = movements
+  // Interest is based on the total income in account. Default interest is defined
+  // in each account.
+  const interestEarned = acct.movements
     .filter((move) => move > 0)
     .map((move) => (move * currentInterest) / 100)
     .reduce((acc, cur) => acc + cur, 0);
@@ -173,3 +211,24 @@ const currencies = new Map([
 const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
+// Sections to implement
+/*
+
+Section 158 - Implement login =================
+
+1. When clicking the login button, use the input value to check whether that user
+exist within the "accounts" array. 
+
+2. If the user is found, then check the PIN number. 
+- If user is NOT found, then update the UI to let the user know that the user does not exist.
+
+3. Check if the PIN number matches.
+- If PIN matches, then use user's login information to update the UI.
+- If PIN DOES NOT match, then let the user know that the PIN does not match.
+
+
+
+
+
+
+*/
